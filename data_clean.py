@@ -29,7 +29,7 @@ df.drop_duplicates(inplace=True)
 
 # Set project ID and table
 project_id = "jovial-totality-458202-q8"  # Replace with your GCP project ID
-destination_table = "your_dataset.cleaned_data"  # Format: dataset.table
+destination_table = "Stock_data.Customer_Data"  # Format: dataset.table
 
 # Upload DataFrame
 to_gbq(df, destination_table, project_id=project_id, if_exists='replace')
