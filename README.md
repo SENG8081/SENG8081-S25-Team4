@@ -20,7 +20,7 @@ Data Cleaning
 
 Validated all the data columns with respect to data types
 
-Data saved into database
+Data saved into Google Bigquery with the help of Google SDK , Screenshot has been attached for the reference
 
 ![Database 1](images/Data_Set1.png)
 ![Database 2](images/Data_Set2.png)
