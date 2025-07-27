@@ -1,32 +1,39 @@
 import pandas as pd
-from google.cloud import bigquery
-from pandas_gbq import to_gbq
+import psycopg2
+import psycopg2.extras
 
-# Load your dataset
+conn = psycopg2.connect(database = "Customer_Data", 
+                        user = "postgres", 
+                        host= 'localhost',
+                        password = "root",
+                        port = 5432)
 df = pd.read_csv("online_retail_2.csv")  # change to your file path
-
-# Remove rows with missing CustomerID
 df.dropna(subset=["Customer ID"], inplace=True)
-
-# Remove negative or zero quantities (usually returns)
 df = df[df["Quantity"] > 0]
-
-# Remove rows with zero or negative unit prices
 df = df[df["Price"] > 0]
-
-# Optional: remove duplicates
 df.drop_duplicates(inplace=True)
-
-# Convert data types
 df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
-df["Customer ID"] = df["Customer ID"].astype(str)
+df["Customer ID"] = pd.to_numeric(df["Customer ID"]).astype(int)
+df = df[~df['StockCode'].isin(['POST'])]
+df['Total_Price'] = df['Price']*df['Quantity']
+print(df)
 
+# Remove rows where any column contains the string 'post'
 
+insert_query = """
+    INSERT INTO Customer_Data_2 (
+        InvoiceNo, StockCode, Description, Quantity,
+        InvoiceDate, Price, CustomerID, Country, Total_Price
+    ) VALUES %s
+"""
+data = list(df[[
+    'Invoice', 'StockCode', 'Description', 'Quantity',
+    'InvoiceDate', 'Price', 'Customer ID', 'Country', 'Total_Price'
+]].itertuples(index=False, name=None))
 
-# Set project ID and table
-project_id = "jovial-totality-458202-q8"  # Replace with your GCP project ID
-destination_table = "Stock_data.Customer_Data_2"  # Format: dataset.table
+# Use psycopg2.extras.execute_values for bulk insert
+with conn.cursor() as cursor:
+    psycopg2.extras.execute_values(cursor, insert_query, data)
+    conn.commit()
 
-# Upload DataFrame
-to_gbq(df, destination_table, project_id=project_id, if_exists='replace')
 

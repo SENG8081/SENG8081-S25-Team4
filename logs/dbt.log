@@ -1,0 +1,78 @@
+[0m18:30:05.327035 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F2B22050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F3DB0910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F3DB0730>]}
+
+
+============================== 18:30:05.339069 | e593e471-0ee3-4097-a842-0656a65b3dee ==============================
+[0m18:30:05.339069 [info ] [MainThread]: Running with dbt=1.10.5
+[0m18:30:05.342083 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'fail_fast': 'False', 'version_check': 'True', 'log_path': 'logs', 'debug': 'False', 'profiles_dir': 'C:\\Users\\itisa\\.dbt', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'empty': 'None', 'log_format': 'default', 'invocation_command': 'dbt init my_dbt_project', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'static_parser': 'True', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m18:30:05.410641 [debug] [MainThread]: Starter project path: D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\include\starter_project
+[0m18:30:05.602318 [info ] [MainThread]: 
+Your new dbt project "my_dbt_project" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m18:30:05.605188 [info ] [MainThread]: Setting up your profile.
+[0m18:30:10.466967 [error] [MainThread]: Encountered an error:
+
+[0m18:30:10.473327 [error] [MainThread]: Traceback (most recent call last):
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\cli\requires.py", line 178, in wrapper
+    result, success = func(*args, **kwargs)
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\cli\requires.py", line 128, in wrapper
+    return func(*args, **kwargs)
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\cli\main.py", line 483, in init
+    results = task.run()
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\task\init.py", line 346, in run
+    self.setup_profile(profile_name)
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\task\init.py", line 261, in setup_profile
+    adapter = self.ask_for_adapter_choice()
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\task\init.py", line 242, in ask_for_adapter_choice
+    numeric_choice = click.prompt(prompt_msg, type=click.INT)
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\click\termui.py", line 168, in prompt
+    value = prompt_func(prompt)
+  File "D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\click\termui.py", line 151, in prompt_func
+    raise Abort() from None
+click.exceptions.Abort
+
+[0m18:30:10.476969 [debug] [MainThread]: Command `dbt init` failed at 18:30:10.476969 after 5.43 seconds
+[0m18:30:10.479497 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F2B22050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F3DB7730>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000285F3DB71C0>]}
+[0m18:30:10.483736 [debug] [MainThread]: Flushing usage events
+[0m18:30:10.699283 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:30:32.645136 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC682B2050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC69540940>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC69540760>]}
+
+
+============================== 18:30:32.655154 | 0ad45cd4-8bc3-4548-8b32-b2fb9415ca0f ==============================
+[0m18:30:32.655154 [info ] [MainThread]: Running with dbt=1.10.5
+[0m18:30:32.658151 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': 'C:\\Users\\itisa\\.dbt', 'fail_fast': 'False', 'warn_error': 'None', 'log_path': 'logs', 'debug': 'False', 'version_check': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'empty': 'None', 'quiet': 'False', 'no_print': 'None', 'log_format': 'default', 'static_parser': 'True', 'introspect': 'True', 'invocation_command': 'dbt init rfm_analysis', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'send_anonymous_usage_stats': 'True'}
+[0m18:30:32.720507 [debug] [MainThread]: Starter project path: D:\Case_Studies_Project\SENG8081-S25-Team4\.venv\lib\site-packages\dbt\include\starter_project
+[0m18:30:32.759969 [info ] [MainThread]: 
+Your new dbt project "rfm_analysis" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m18:30:32.764170 [info ] [MainThread]: Setting up your profile.
+[0m18:31:29.969408 [info ] [MainThread]: Profile rfm_analysis written to C:\Users\itisa\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m18:31:29.973410 [debug] [MainThread]: Command `dbt init` succeeded at 18:31:29.972413 after 57.60 seconds
+[0m18:31:29.975411 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC682B2050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC69541000>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DC69541690>]}
+[0m18:31:29.978599 [debug] [MainThread]: Flushing usage events
+[0m18:31:30.169017 [debug] [MainThread]: An error was encountered while trying to flush usage events
