@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: Customer_Data
+    schema: public         # or the correct schema where your table is
+    tables:
+      - name: customer_data_2
