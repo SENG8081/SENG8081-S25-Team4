@@ -1,29 +1,61 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestNeighbors
+import numpy as np
+import matplotlib.pyplot as plt
 
-engine = create_engine("postgresql://postgres:root@localhost:5432/Customer_Data")
-df = pd.read_sql("SELECT * FROM rfm_analysis.rfm_base", engine)
-
-df['churn'] = df['recency'].apply(lambda x: 1 if x > 90 else 0)
-df['avg_order_value'] = df['monetary'] / df['frequency']
-df['monetary_per_day'] = df['monetary'] / (df['recency'] + 1)  # +1 to avoid division by zero
+# Connect to PostgreSQL
+try:
+    engine = create_engine("postgresql://postgres:root@localhost:5432/Customer_Data")
+    df = pd.read_sql("SELECT * FROM rfm_analysis.rfm_base", engine)
+except Exception as e:
+    print(f"Error connecting to PostgreSQL: {e}")
+    exit()
+# Feature engineering (consistent with your previous code)
+df['avg_order_value'] = df['monetary'] / df['frequency'].replace(0, 1)  # Avoid division by zero
+df['monetary_per_day'] = df['monetary'] / (df['recency'] + 1)
 df['is_high_value'] = (df['monetary'] > df['monetary'].quantile(0.75)).astype(int)
-X = df[['frequency', 'monetary', 'avg_order_value', 'monetary_per_day', 'is_high_value']]
-y=df['churn']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Select features for clustering
+features = ['frequency', 'monetary', 'avg_order_value', 'monetary_per_day', 'is_high_value']
+X = df[features]
 
+# Standardize features (DBSCAN is sensitive to scale)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
 
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+# Estimate eps using k-nearest neighbors
+ # Rule of thumb: min_samples = 2 * number of features or adjust based on domain
+eps = 0.6  # Reduced from 6 to create denser clusters
+min_samples = 20 
+neighbors = NearestNeighbors(n_neighbors=min_samples)
+neighbors_fit = neighbors.fit(X_scaled)
+distances, _ = neighbors_fit.kneighbors(X_scaled)
+distances = np.sort(distances[:, min_samples - 1], axis=0)
 
-# Predict & Evaluate
-y_pred = model.predict(X_test)
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+# Plot k-distance graph to choose eps
+plt.plot(distances)
+plt.title("K-Distance Graph for DBSCAN eps Selection")
+plt.xlabel("Points sorted by distance")
+plt.ylabel(f"Distance to {min_samples}-th nearest neighbor")
+plt.savefig("k_distance_plot.png")
+plt.close()
+print("K-distance plot saved as 'k_distance_plot.png'. Choose eps at the 'elbow' point.")
 
-cm = confusion_matrix(y_test, y_pred)
-ConfusionMatrixDisplay(cm).plot()
-print(classification_report(y_test, y_pred))
+# Apply DBSCAN (adjust eps based on k-distance plot or start with a reasonable value)
+ # Increased to require more points per cluster  # Placeholder: Adjust based on k-distance plot or domain knowledge
+dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+df['cluster'] = dbscan.fit_predict(X_scaled)
+
+# Analyze clustering results
+print("Cluster distribution:\n", df['cluster'].value_counts())
+
+# Prepare output DataFrame
+output_df = df[['customerid', 'recency', 'frequency', 'monetary', 'avg_order_value', 'monetary_per_day', 'is_high_value', 'cluster']].copy()
+
+# Save to CSV for Tableau
+output_file = "rfm_dbscan_clusters.csv"
+output_df.to_csv(output_file, index=False)
+print(f"Clustering results saved to {output_file}")

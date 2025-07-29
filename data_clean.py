@@ -1,35 +1,39 @@
 import pandas as pd
-from google.cloud import bigquery
-from pandas_gbq import to_gbq
+import psycopg2
+import psycopg2.extras
 
-# Load CSV file
-df = pd.read_csv('Online Retail.xlsx', encoding='ISO-8859-1')
-
-# Drop rows with missing essential fields
-df.dropna(subset=["InvoiceNo", "StockCode", "Description", "Quantity", "InvoiceDate", "UnitPrice"], inplace=True)
-
-# Convert data types
-df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce").fillna(0).astype(int)
-df["UnitPrice"] = pd.to_numeric(df["UnitPrice"], errors="coerce").fillna(0.0)
-df["CustomerID"] = pd.to_numeric(df["CustomerID"], errors="coerce").astype("Int64")  # Allows for nulls
-df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
-
-# Remove negative or zero quantities or prices (optional, depending on use case)
-df = df[(df["Quantity"] > 0) & (df["UnitPrice"] > 0)]
-
-# Strip whitespace from text fields
-df["Description"] = df["Description"].str.strip()
-df["Country"] = df["Country"].str.strip()
-
-# Drop duplicate rows
+conn = psycopg2.connect(database = "Customer_Data", 
+                        user = "postgres", 
+                        host= 'localhost',
+                        password = "root",
+                        port = 5432)
+df = pd.read_csv("Online_Retail.csv")  # change to your file path
+df.dropna(subset=["CustomerID"], inplace=True)
+df = df[df["Quantity"] > 0]
+df = df[df["UnitPrice"] > 0]
 df.drop_duplicates(inplace=True)
+df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+df["CustomerID"] = pd.to_numeric(df["CustomerID"]).astype(int)
+df = df[~df['StockCode'].isin(['POST'])]
+df['Total_Price'] = df['UnitPrice']*df['Quantity']
+print(df)
+
+# Remove rows where any column contains the string 'post'
+
+insert_query = """
+    INSERT INTO Customer_Data_2 (
+        InvoiceNo, StockCode, Description, Quantity,
+        InvoiceDate, Price, CustomerID, Country, Total_Price
+    ) VALUES %s
+"""
+data = list(df[[
+    'InvoiceNo', 'StockCode', 'Description', 'Quantity',
+    'InvoiceDate', 'UnitPrice', 'CustomerID', 'Country', 'Total_Price'
+]].itertuples(index=False, name=None))
+
+# Use psycopg2.extras.execute_values for bulk insert
+with conn.cursor() as cursor:
+    psycopg2.extras.execute_values(cursor, insert_query, data)
+    conn.commit()
 
 
-
-
-# Set project ID and table
-project_id = "jovial-totality-458202-q8"  # Replace with your GCP project ID
-destination_table = "Stock_data.Customer_Data"  # Format: dataset.table
-
-# Upload DataFrame
-to_gbq(df, destination_table, project_id=project_id, if_exists='replace')
