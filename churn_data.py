@@ -13,7 +13,7 @@ try:
 except Exception as e:
     print(f"Error connecting to PostgreSQL: {e}")
     exit()
-# Feature engineering (consistent with your previous code)
+# Feature engineering data consistancy 
 df['avg_order_value'] = df['monetary'] / df['frequency'].replace(0, 1)  # Avoid division by zero
 df['monetary_per_day'] = df['monetary'] / (df['recency'] + 1)
 df['is_high_value'] = (df['monetary'] > df['monetary'].quantile(0.75)).astype(int)
@@ -44,7 +44,7 @@ plt.savefig("k_distance_plot.png")
 plt.close()
 print("K-distance plot saved as 'k_distance_plot.png'. Choose eps at the 'elbow' point.")
 
-# Apply DBSCAN (adjust eps based on k-distance plot or start with a reasonable value)
+# DBSCAN implimentation 
  # Increased to require more points per cluster  # Placeholder: Adjust based on k-distance plot or domain knowledge
 dbscan = DBSCAN(eps=eps, min_samples=min_samples)
 df['cluster'] = dbscan.fit_predict(X_scaled)
